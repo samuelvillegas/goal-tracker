@@ -49,9 +49,13 @@ Once installed, open it with Wi-Fi and data off; it loads and runs normally.
 python3 -m http.server 8137
 ```
 
-Then open `http://127.0.0.1:8137/`. A service worker needs `http://localhost`,
+Then open `http://localhost:8137/`. A service worker needs `http://localhost`,
 `http://127.0.0.1` or HTTPS — opening `index.html` as a `file://` path will show the
 app but will not install or cache it.
+
+You only need the server for the first load: once the app has cached itself you can
+stop the server and the installed app keeps working. Full walkthrough, including
+installing it to the Mac Dock, is in **[LOCAL-SETUP.md](LOCAL-SETUP.md)**.
 
 ## Files
 
