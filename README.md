@@ -26,12 +26,19 @@ so the elapsed time is correct when you come back.
 ## Install it on your phone or Mac
 
 The app needs to be served over HTTPS once before it can be installed; after that
-it runs offline. The easiest host is GitHub Pages:
+it runs offline. This repository is set up for **Netlify**, which is free and can
+deploy straight from GitHub without making the repository public.
 
-1. In this repository, go to **Settings → Pages**.
-2. Under **Build and deployment → Source**, choose **GitHub Actions**.
-3. Push to `main` (or run the *Deploy to GitHub Pages* workflow by hand).
-   Your app appears at `https://<your-username>.github.io/goal-tracker/`.
+1. Sign in at [netlify.com](https://app.netlify.com) with GitHub.
+2. **Add new site → Import an existing project**, and pick this repository.
+3. Leave the build settings as they are — `netlify.toml` already says to publish
+   the repository root, and there is no build step.
+4. **Deploy**. You get a URL like `https://goal-tracker.netlify.app`, and every
+   push to `main` redeploys it.
+
+In a hurry, or no GitHub connection? Drag this folder onto
+[app.netlify.com/drop](https://app.netlify.com/drop) instead; that publishes it in
+seconds, though you need an account for the URL to be permanent.
 
 Then, on the device you want it on:
 

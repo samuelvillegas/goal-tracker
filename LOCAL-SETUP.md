@@ -1,7 +1,7 @@
 # Running Focus Ledger locally
 
 How to run the app from your own machine and install it to your Mac's Dock,
-without GitHub Pages or any hosting.
+without any hosting.
 
 **Short version:** you need the little web server running only for the *first*
 load. Once the app has cached itself you can quit the server, and the installed
@@ -11,13 +11,28 @@ app keeps opening and working normally.
 
 ## 1. What you need
 
-Python 3, which is already on macOS. Check it:
+Any static web server. There is no build step and nothing to install — the app is
+plain HTML, CSS and JS.
+
+Python 3 is the usual choice. Check whether you have it:
 
 ```bash
 python3 --version
 ```
 
-Nothing else — no npm install, no build step. The app is plain HTML, CSS and JS.
+On macOS this is **not** guaranteed: `python3` only works if the Xcode Command Line
+Tools are installed, and otherwise pops up a dialog offering to install them. If you
+would rather not, use one of these instead — any of them replaces the `python3`
+command in step 3:
+
+```bash
+npx serve -l 8137           # if you have Node
+ruby -run -e httpd . -p 8137   # macOS system Ruby (being phased out by Apple)
+php -S localhost:8137          # if you have PHP
+```
+
+Or skip the local server altogether and use the hosted copy — see
+[the README](README.md#install-it-on-your-phone-or-mac).
 
 ## 2. Get the code
 
@@ -136,6 +151,8 @@ install it from whichever one you intend to keep).
 and load `http://localhost:8137/` once; it re-caches. This normally only happens
 after clearing site data or a long period of disuse.
 
-**You want it on your iPhone too** — a local server cannot do that. Enable
-GitHub Pages as described in the [README](README.md); that gives you an HTTPS
-URL both machines can install from.
+**You want it on your iPhone too** — a local server cannot do that. iOS will not
+register a service worker for anything but HTTPS or `localhost`, and your phone
+cannot reach your Mac's `localhost`. Deploy it to Netlify as described in the
+[README](README.md#install-it-on-your-phone-or-mac); that gives you an HTTPS URL
+every device can install from, including anyone you share it with.
