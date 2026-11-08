@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Focus Ledger — Task Stopwatch</title>
+<meta name="description" content="An offline task stopwatch. Track what you actually do, stored only on your device.">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#2E2D2E">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Focus Ledger">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="icon" href="./icons/icon-192.png" sizes="192x192" type="image/png">
+<link rel="icon" href="./icons/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<main class="wrap">
+
+  <header class="masthead">
+    <div class="brand">
+      <h1 class="display brand-title">FOCUS LEDGER</h1>
+      <p class="display brand-sub">TASK STOPWATCH</p>
+      <p class="status"><span class="dot" id="status-dot"></span><span id="status-text">All clocks stopped</span></p>
+    </div>
+    <div class="head-tools">
+      <button type="button" id="install-btn" class="ghost-btn" hidden>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 20h16"/></svg>
+        INSTALL
+      </button>
+      <div role="group" aria-label="Date range" class="segmented" id="ranges">
+        <button type="button" data-range="today" aria-pressed="true">TODAY</button>
+        <button type="button" data-range="week" aria-pressed="false">WEEK</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid" id="grid">
+
+    <section class="card span2 timer-card" aria-label="Active timer">
+      <div class="timer-main">
+        <p class="kicker"><b>01</b>&nbsp;&nbsp;ACTIVE TIMER</p>
+        <p class="display state-word" id="state-word">IDLE</p>
+        <p class="active-name" id="active-name">Pick a task below to start the clock</p>
+        <p class="display hero-digits" id="hero-digits">00:00:00</p>
+        <div class="stat-row">
+          <div class="stat"><span class="kicker">STARTED</span><span class="display stat-val" id="stat-started">--:--</span></div>
+          <div class="stat"><span class="kicker">TASK TOTAL</span><span class="display stat-val" id="stat-total">--</span></div>
+          <div class="stat"><span class="kicker">TASKS</span><span class="display stat-val" id="stat-count">00</span></div>
+        </div>
+      </div>
+      <div class="ring-wrap">
+        <svg class="ring" viewBox="0 0 220 220" aria-hidden="true" id="ring"></svg>
+        <div class="ring-center">
+          <button type="button" id="stop-btn" class="stop-btn" aria-label="Stop timer" hidden>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
+          </button>
+          <span class="kicker" id="ring-label">PICK A TASK</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card summary-card" aria-labelledby="sum-h">
+      <h2 class="kicker" id="sum-h"><b>02</b>&nbsp;&nbsp;<span id="range-title">TODAY</span></h2>
+      <p class="display big-total" id="grand-total">00:00:00</p>
+      <p class="kicker">TOTAL FOCUS</p>
+      <div class="bars" id="bars"></div>
+    </section>
+
+    <section class="card form-card" aria-labelledby="new-h">
+      <h2 class="kicker" id="new-h"><b id="new-num">03</b>&nbsp;&nbsp;NEW TASK</h2>
+      <p class="display card-head">ADD A TRACK_</p>
+      <form id="new-form" class="new-form" autocomplete="off">
+        <label for="new-task">TASK NAME</label>
+        <input id="new-task" name="task" type="text" placeholder="e.g. Reading" maxlength="60" required>
+        <button type="submit" class="accent-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          ADD TASK
+        </button>
+      </form>
+    </section>
+
+    <section class="card span2 log-card" aria-labelledby="log-h">
+      <h2 class="kicker" id="log-h"><b id="log-num">04</b>&nbsp;&nbsp;SESSION LOG</h2>
+      <ol class="log" id="log"></ol>
+      <p class="empty" id="log-empty">Nothing logged in this range yet. Start a clock and the sessions land here.</p>
+    </section>
+
+    <section class="card data-card" aria-labelledby="data-h">
+      <h2 class="kicker" id="data-h"><b id="data-num">05</b>&nbsp;&nbsp;YOUR DATA</h2>
+      <p class="display card-head">ON THIS DEVICE</p>
+      <p class="fine">Everything is saved in this browser's local storage. Nothing leaves your device, and nothing is synced — so keep a backup if the data matters.</p>
+      <div class="data-btns">
+        <button type="button" id="export-btn" class="ghost-btn">EXPORT BACKUP</button>
+        <button type="button" id="import-btn" class="ghost-btn">IMPORT BACKUP</button>
+        <input type="file" id="import-file" accept="application/json,.json" hidden>
+      </div>
+      <p class="fine" id="data-msg" role="status" aria-live="polite"></p>
+    </section>
+
+  </div>
+
+  <footer class="footer">
+    <p class="display foot-line">TRACK WHAT YOU<br>ACTUALLY DO <span class="caret">_</span></p>
+    <div class="foot-right">
+      <p class="display foot-mark">Focus Ledger</p>
+      <details class="install-help">
+        <summary>How to install on your phone or Mac</summary>
+        <ul>
+          <li><b>iPhone / iPad:</b> open in Safari, tap Share, then <i>Add to Home Screen</i>.</li>
+          <li><b>Mac, Safari:</b> File menu, then <i>Add to Dock</i>.</li>
+          <li><b>Chrome or Edge:</b> use the install icon in the address bar, or the INSTALL button above.</li>
+          <li><b>Android:</b> Chrome menu, then <i>Install app</i> / <i>Add to Home screen</i>.</li>
+        </ul>
+        <p>Once installed it opens and runs with no internet connection.</p>
+      </details>
+    </div>
+  </footer>
+</main>
+
+<dialog id="rename-dlg" class="dlg">
+  <form id="rename-form" method="dialog">
+    <h2 class="display dlg-head">RENAME TASK</h2>
+    <label for="rename-input">TASK NAME</label>
+    <input id="rename-input" type="text" maxlength="60" required>
+    <div class="dlg-btns">
+      <button type="button" value="cancel" class="ghost-btn" data-close>CANCEL</button>
+      <button type="submit" class="accent-btn">SAVE</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="delete-dlg" class="dlg">
+  <form id="delete-form" method="dialog">
+    <h2 class="display dlg-head">DELETE TASK</h2>
+    <p class="fine" id="delete-text"></p>
+    <div class="dlg-btns">
+      <button type="button" value="cancel" class="ghost-btn" data-close>KEEP IT</button>
+      <button type="submit" class="danger-btn">DELETE</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden>
+  <span id="toast-text"></span>
+  <button type="button" id="toast-btn" class="toast-btn">RELOAD</button>
+</div>
+
+<script src="./app.js"></script>
+</body>
+</html>
